@@ -13,6 +13,7 @@ Source0:        https://github.com/luaposix/luaposix/archive/v%{version}/lua-pos
 BuildRequires:  gcc
 BuildRequires:  lua-devel
 BuildRequires:  lua
+BuildRequires:  pkgconfig(libcrypt)
 
 
 %description
