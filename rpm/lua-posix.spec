@@ -1,11 +1,14 @@
-%global luaver 5.3
-%define lua_libdir %{_libdir}/lua/%{luaver}
-%define lua_pkgdir %{_datadir}/lua/%{luaver}
+%define flavor @BUILD_FLAVOR@%{nil}
+%define mod_name posix
 
-
+%if "%{flavor}" == ""
 Name:           lua-posix
+ExclusiveArch:  do_not_build
+%else
+Name:           %{flavor}-%{mod_name}
+%endif
 Version:        35.0.1
-Release:        1
+Release:        0
 Summary:        A POSIX library for Lua
 License:        MIT
 URL:            http://luaforge.net/projects/luaposix/
@@ -13,6 +16,7 @@ Source0:        https://github.com/luaposix/luaposix/archive/v%{version}/lua-pos
 BuildRequires:  gcc
 BuildRequires:  lua-devel
 BuildRequires:  lua
+BuildRequires:  lua-macros
 BuildRequires:  pkgconfig(libcrypt)
 
 
@@ -24,13 +28,16 @@ to Lua programs.
 %autosetup -n %{name}-%{version}/upstream
 
 %build
+# avoid setting USER tag to not include $USER
+export USER=""
 build-aux/luke CFLAGS="%build_cflags"
 
 
 %install
 build-aux/luke install \
          PREFIX=%{buildroot}%{_prefix} \
-         INST_LIBDIR=%{buildroot}%{lua_libdir}
+         INST_LIBDIR=%{buildroot}%{lua_libdir} \
+         INST_LUADIR=%{buildroot}%{lua_noarchdir}
 
 
 #check
@@ -40,5 +47,5 @@ build-aux/luke install \
 %files
 %license LICENSE
 %doc AUTHORS ChangeLog.old NEWS.md README.md
-%{lua_libdir}/*
-%{lua_pkgdir}/posix/
+%{lua_archdir}/posix
+%{lua_noarchdir}/posix
